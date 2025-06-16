@@ -4,3 +4,5 @@
 terraform.tfstate.backup
 terraform.tfstate
 vms/
+.DS_Store
+modules/.DS_Store

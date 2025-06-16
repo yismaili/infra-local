@@ -1,9 +1,14 @@
+# root Module
 terraform {
   required_version = ">= 1.0"
   required_providers {
     null = {
       source  = "hashicorp/null"
       version = "~> 3.0"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.0"
     }
   }
 }
@@ -31,7 +36,7 @@ module "docker_provisioner" {
   source = "./modules/docker-provisioner"
 
   vm_connection_configs = module.vagrant_vms.vm_connection_configs
-  vm_dependencies      = module.vagrant_vms.vm_ids
+  vm_dependencies      = module.vagrant_vms.vm_key_wait_ids 
   os_distribution      = var.os_distribution
   test_docker         = var.test_docker
   install_docker_tools = var.install_docker_tools

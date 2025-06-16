@@ -1,5 +1,3 @@
-# modules/vagrant-vm/variables.tf
-
 variable "vm_names" {
   description = "List of VM names to create"
   type        = list(string)
@@ -13,7 +11,7 @@ variable "vm_ips" {
 variable "vm_base_path" {
   description = "Base path where VM directories are created"
   type        = string
-  default     = "../../vms"
+  default     = "./vms"
 }
 
 variable "setup_script_path" {

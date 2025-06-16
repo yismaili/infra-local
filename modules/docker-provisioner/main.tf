@@ -1,4 +1,3 @@
-# modules/docker-provisioner/main.tf
 
 resource "null_resource" "docker_installation" {
   count = length(var.vm_connection_configs)
@@ -58,3 +57,4 @@ resource "null_resource" "docker_installation" {
 
   depends_on = [var.vm_dependencies]
 }
+

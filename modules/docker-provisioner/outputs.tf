@@ -1,5 +1,3 @@
-# modules/docker-provisioner/outputs.tf
-
 output "installation_ids" {
   description = "Resource IDs of Docker installations"
   value       = null_resource.docker_installation[*].id

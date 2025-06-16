@@ -1,5 +1,3 @@
-# modules/docker-provisioner/variables.tf
-
 variable "vm_connection_configs" {
   description = "List of connection configurations for VMs"
   type = list(object({
@@ -10,6 +8,7 @@ variable "vm_connection_configs" {
     timeout     = string
   }))
 }
+
 
 variable "vm_dependencies" {
   description = "Dependencies to wait for before provisioning Docker"
