@@ -56,7 +56,7 @@ variable "os_distribution" {
   description = "Linux distribution for Docker installation"
   type        = string
   default     = null
-  
+
   validation {
     condition     = contains(["debian", "ubuntu"], var.os_distribution)
     error_message = "OS distribution must be either 'debian' or 'ubuntu'."
@@ -85,8 +85,19 @@ variable "docker_config" {
   description = "Docker-specific configuration"
   type = object({
     enable_experimental = optional(bool, false)
-    log_driver         = optional(string, "json-file")
-    log_max_size      = optional(string, "10m")
+    log_driver          = optional(string, "json-file")
+    log_max_size        = optional(string, "10m")
+  })
+  default = {}
+}
+
+# k3s config
+variable "k3s_config" {
+  description = "K3s cluster configuration"
+  type = object({
+    version     = optional(string, "latest")
+    server_args = optional(list(string), [])
+    agent_args  = optional(list(string), [])
   })
   default = {}
 }
