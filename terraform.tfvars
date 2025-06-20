@@ -1,6 +1,6 @@
 # vms config
-vm_names = ["server-w0", "server-w1", "server-w2"]
-vm_ips   = ["192.168.56.110", "192.168.56.111", "192.168.56.112"]
+vm_names = ["master", "server-w1", "server-w2", "server-w3"]
+vm_ips   = ["192.168.56.110", "192.168.56.111", "192.168.56.112", "192.168.56.113"]
 
 vm_config = {
   memory = "2048"
