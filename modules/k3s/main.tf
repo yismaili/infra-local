@@ -7,26 +7,24 @@ resource "null_resource" "k3s_server" {
     timeout     = var.vm_connection_configs[0].timeout
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "echo 'Installing k3s server on master node...'",
-      "sudo apt-get update",
-      "sudo apt-get install -y curl python3",
-      
-      # Install k3s server with node IP
-      "curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644 --node-ip ${var.vm_connection_configs[0].host}",
-      
-      # Wait for k3s to be ready
-      "sudo systemctl enable k3s",
-      "sudo systemctl start k3s",
-      "sleep 30",
-      
-      # Verify k3s server is running
-      "sudo k3s kubectl get nodes",
-      
-      "echo 'K3s server installation completed successfully!'"
-    ]
-  }
+ provisioner "remote-exec" {
+  inline = [
+    "echo 'Installing k3s server on master node...'",
+    "sudo apt-get update",
+    "sudo apt-get install -y curl python3",
+
+    # Set variables properly
+    "NODE_IP=${var.vm_connection_configs[0].host}",
+    "curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644 --node-ip $NODE_IP",
+
+    "sudo systemctl enable k3s",
+    "sudo systemctl start k3s",
+    "sleep 30",
+    "sudo k3s kubectl get nodes",
+    "echo 'K3s server installation completed successfully!'"
+  ]
+}
+
 
   triggers = {
     vm_config_change = var.config_hash

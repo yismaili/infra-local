@@ -40,15 +40,6 @@ resource "null_resource" "docker_installation" {
     ]
   }
 
-  # Optional: Install additional Docker tools
-#   provisioner "remote-exec" {
-#     count = var.install_docker_tools ? 1 : 0
-#     inline = var.install_docker_tools ? [
-#       "echo 'Installing additional Docker tools...'",
-#       "sudo apt install -y docker-scan-plugin"
-#     ] : []
-#   }
-
   triggers = {
     vm_host = var.vm_connection_configs[count.index].host
     docker_version = var.docker_version_trigger
