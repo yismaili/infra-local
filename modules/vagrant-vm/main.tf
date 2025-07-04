@@ -65,7 +65,7 @@ resource "null_resource" "wait_for_keys" {
   }
 }
 
-# Read private keys after VMs are created
+# get private keys after VMs are created
 data "local_file" "private_keys" {
   count    = length(var.vm_names)
   filename = "${var.vm_base_path}/${var.vm_names[count.index]}/.vagrant/machines/${var.vm_names[count.index]}/virtualbox/private_key"

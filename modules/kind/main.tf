@@ -1,4 +1,3 @@
-# Install KIND on the single VM
 resource "null_resource" "install_kind" {
   connection {
     type        = var.vm_connection_configs[0].type
@@ -14,17 +13,16 @@ resource "null_resource" "install_kind" {
       "sudo apt-get update",
       "sudo apt-get install -y curl",
       
-      # Install kubectl
+      # install kubectl
       "curl -LO \"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\"",
       "sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl",
       "rm kubectl",
       
-      # Install KIND
+      # install KIND
       "[ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/${var.kind_version}/kind-linux-amd64",
       "chmod +x ./kind",
       "sudo mv ./kind /usr/local/bin/kind",
       
-      # Verify installations
       "kind version",
       "kubectl version --client",
       
@@ -38,7 +36,6 @@ resource "null_resource" "install_kind" {
   }
 }
 
-# Create KIND cluster configuration
 resource "local_file" "kind_config" {
   content = yamlencode({
     kind       = "Cluster"
@@ -72,7 +69,6 @@ resource "local_file" "kind_config" {
   filename = "${path.module}/kind-config.yaml"
 }
 
-# Create KIND cluster on the first VM (master)
 resource "null_resource" "create_kind_cluster" {
   depends_on = [null_resource.install_kind, local_file.kind_config]
 
@@ -93,23 +89,17 @@ resource "null_resource" "create_kind_cluster" {
     inline = [
       "echo 'Creating KIND cluster ${var.cluster_name}...'",
       
-      # Delete existing cluster if it exists
       "kind delete cluster --name ${var.cluster_name} 2>/dev/null || true",
       
-      # Create new cluster
       "kind create cluster --config /tmp/kind-config.yaml --name ${var.cluster_name}",
       
-      # Wait for cluster to be ready
       "sleep 30",
       
-      # Verify cluster
       "kubectl cluster-info --context kind-${var.cluster_name}",
       "kubectl get nodes --context kind-${var.cluster_name}",
       
-      # Export kubeconfig for external access
       "kind get kubeconfig --name ${var.cluster_name} > /tmp/kubeconfig-${var.cluster_name}.yaml",
       
-      # Update kubeconfig server address for external access
       "sed -i 's|https://127.0.0.1:${var.api_server_port}|https://${var.vm_connection_configs[0].host}:${var.api_server_port}|g' /tmp/kubeconfig-${var.cluster_name}.yaml",
       
       "echo 'KIND cluster ${var.cluster_name} created successfully!'"
@@ -122,7 +112,7 @@ resource "null_resource" "create_kind_cluster" {
   }
 }
 
-# Download kubeconfig from master node
+
 resource "null_resource" "download_kubeconfig" {
   depends_on = [null_resource.create_kind_cluster]
 
@@ -148,7 +138,6 @@ resource "null_resource" "download_kubeconfig" {
   }
 }
 
-# Optional: Set up additional KIND clusters for testing/development
 resource "null_resource" "additional_test_clusters" {
   count = length(var.additional_clusters)
   
@@ -166,13 +155,10 @@ resource "null_resource" "additional_test_clusters" {
     inline = [
       "echo 'Creating additional KIND cluster ${var.additional_clusters[count.index].name}...'",
       
-      # Delete existing cluster if it exists
       "kind delete cluster --name ${var.additional_clusters[count.index].name} 2>/dev/null || true",
       
-      # Create simple cluster (modify as needed)
       "kind create cluster --name ${var.additional_clusters[count.index].name}",
       
-      # Verify cluster
       "kubectl cluster-info --context kind-${var.additional_clusters[count.index].name}",
       
       "echo 'Additional KIND cluster ${var.additional_clusters[count.index].name} created!'"
@@ -185,7 +171,6 @@ resource "null_resource" "additional_test_clusters" {
   }
 }
 
-# Install common Kubernetes tools and applications
 resource "null_resource" "install_k8s_tools" {
   count = var.install_k8s_tools ? 1 : 0
   
@@ -203,16 +188,13 @@ resource "null_resource" "install_k8s_tools" {
     inline = [
       "echo 'Installing Kubernetes tools...'",
       
-      # Install Helm
       "curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash",
       
-      # Install k9s (Kubernetes CLI UI)
       "wget https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_amd64.tar.gz",
       "tar -xzf k9s_Linux_amd64.tar.gz",
       "sudo mv k9s /usr/local/bin/",
       "rm k9s_Linux_amd64.tar.gz",
       
-      # Install kubectx and kubens
       "sudo apt-get install -y git",
       "git clone https://github.com/ahmetb/kubectx /opt/kubectx",
       "sudo ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx",
@@ -228,7 +210,6 @@ resource "null_resource" "install_k8s_tools" {
   }
 }
 
-# Cluster verification and status check
 resource "null_resource" "cluster_verification" {
   depends_on = [
     null_resource.create_kind_cluster,
@@ -248,12 +229,10 @@ resource "null_resource" "cluster_verification" {
       "echo 'Verifying KIND cluster status...'",
       "sleep 15",
       
-      # Check cluster status
       "kubectl get nodes --context kind-${var.cluster_name} -o wide",
       "kubectl get pods -A --context kind-${var.cluster_name}",
       "kubectl get services --context kind-${var.cluster_name}",
       
-      # Check KIND cluster info
       "kind get clusters",
       "docker ps --filter 'label=io.x-k8s.kind.cluster=${var.cluster_name}'",
       
