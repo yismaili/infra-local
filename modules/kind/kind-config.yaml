@@ -1,0 +1,15 @@
+"apiVersion": "kind.x-k8s.io/v1alpha4"
+"kind": "Cluster"
+"name": "single-vm-cluster"
+"networking":
+  "apiServerAddress": "192.168.56.110"
+  "apiServerPort": 6443
+"nodes":
+- "extraPortMappings":
+  - "containerPort": 6443
+    "hostPort": 6443
+    "protocol": "TCP"
+  "role": "control-plane"
+- "role": "worker"
+- "role": "worker"
+- "role": "worker"

@@ -47,19 +47,24 @@ module "docker_provisioner" {
   config_hash            = md5(jsonencode(var.docker_config))
 }
 
-# module to install k3s
-module "k3s" {
-  source = "./modules/k3s"
+# module to install KIND
+module "kind" {
+  source = "./modules/kind"
 
   vm_connection_configs = module.vagrant_vms.vm_connection_configs
   vm_dependencies       = module.docker_provisioner.installation_ids
   config_hash          = md5(jsonencode({
     vm_names = var.vm_names
     vm_ips   = var.vm_ips
-    k3s_config = var.k3s_config
+    kind_config = var.kind_config
   }))
   
-  k3s_version     = var.k3s_config.version
-  k3s_server_args = var.k3s_config.server_args
-  k3s_agent_args  = var.k3s_config.agent_args
+  kind_version        = var.kind_config.version
+  cluster_name        = var.kind_config.cluster_name
+  kubernetes_version  = var.kind_config.kubernetes_version
+  worker_node_count   = var.kind_config.worker_node_count
+  api_server_port     = var.kind_config.api_server_port
+  install_k8s_tools   = var.kind_config.install_k8s_tools
+  additional_clusters = var.kind_config.additional_clusters
+  cluster_config      = var.kind_config.cluster_config
 }

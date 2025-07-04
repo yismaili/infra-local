@@ -1,7 +1,7 @@
 variable "vm_names" {
   description = "List of VM names to create"
   type        = list(string)
-  default     = ["null", "null", "null"]
+  default     = ["kind-host"]
 }
 
 variable "vm_ips" {
@@ -35,7 +35,7 @@ variable "ssh_user" {
 }
 
 variable "ssh_timeout" {
-  description = "SSH connection timeout in seconds"
+  description = "SSH connection timeout in seconds"  
   type        = number
   default     = 0
 }
@@ -91,13 +91,28 @@ variable "docker_config" {
   default = {}
 }
 
-# k3s config
-variable "k3s_config" {
-  description = "K3s cluster configuration"
+# KIND config
+variable "kind_config" {
+  description = "KIND cluster configuration"
   type = object({
-    version     = optional(string, "latest")
-    server_args = optional(list(string), [])
-    agent_args  = optional(list(string), [])
+    version           = optional(string, "v0.20.0")
+    cluster_name      = optional(string, "kind-cluster")
+    kubernetes_version = optional(string, "v1.27.3")
+    worker_node_count = optional(number, 1)
+    api_server_port   = optional(number, 6443)
+    install_k8s_tools = optional(bool, true)
+    additional_clusters = optional(list(object({
+      name = string
+      vm_index = number
+    })), [])
+    cluster_config = optional(object({
+      networking = optional(object({
+        podSubnet     = optional(string, "10.244.0.0/16")
+        serviceSubnet = optional(string, "10.96.0.0/12")
+      }), {})
+      feature_gates = optional(map(bool), {})
+      runtime_config = optional(map(string), {})
+    }), {})
   })
   default = {}
 }

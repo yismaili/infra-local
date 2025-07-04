@@ -21,15 +21,19 @@ output "docker_installations" {
   }
 }
 
-output "k3s_cluster" {
-  description = "K3s cluster information"
+output "kind_cluster" {
+  description = "KIND cluster information"
   value = {
-    master_ip        = module.k3s.master_node_ip
-    worker_ips       = module.k3s.worker_node_ips
-    cluster_endpoint = module.k3s.cluster_endpoint
-    kubeconfig_cmd   = module.k3s.kubeconfig_command
-    kubectl_commands = module.k3s.kubectl_commands
-    status          = module.k3s.installation_status
+    master_ip         = module.kind.master_node_ip
+    cluster_name      = module.kind.cluster_name
+    cluster_endpoint  = module.kind.cluster_endpoint
+    kubeconfig_path   = module.kind.kubeconfig_path
+    kubeconfig_cmd    = module.kind.kubeconfig_command
+    kubectl_commands  = module.kind.kubectl_commands
+    kind_commands     = module.kind.kind_commands
+    docker_commands   = module.kind.docker_commands
+    status           = module.kind.installation_status
+    access_info      = module.kind.access_info
   }
 }
 
@@ -42,11 +46,13 @@ output "ssh_commands" {
 }
 
 output "cluster_access_info" {
-  description = "Commands to access the K3s cluster"
+  description = "Commands to access the KIND cluster"
   value = {
-    ssh_to_master = "ssh -i ${var.vm_base_path}/${var.vm_names[0]}/.vagrant/machines/${var.vm_names[0]}/virtualbox/private_key vagrant@${var.vm_ips[0]}"
-    get_kubeconfig = module.k3s.kubeconfig_command
-    kubectl_nodes = "sudo k3s kubectl get nodes -o wide"
-    kubectl_pods = "sudo k3s kubectl get pods -A"
+    ssh_to_master     = "ssh -i ${var.vm_base_path}/${var.vm_names[0]}/.vagrant/machines/${var.vm_names[0]}/virtualbox/private_key vagrant@${var.vm_ips[0]}"
+    export_kubeconfig = "export KUBECONFIG=${module.kind.kubeconfig_path}"
+    kubectl_nodes     = "kubectl get nodes --kubeconfig=${module.kind.kubeconfig_path}"
+    kubectl_pods      = "kubectl get pods -A --kubeconfig=${module.kind.kubeconfig_path}"
+    kind_info         = "kind get clusters"
+    docker_containers = "docker ps --filter 'label=io.x-k8s.kind.cluster=${module.kind.cluster_name}'"
   }
 }

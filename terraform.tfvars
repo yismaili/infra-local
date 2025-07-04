@@ -1,10 +1,9 @@
-# vms config
-vm_names = ["master", "server-w1"]
-vm_ips   = ["192.168.56.110", "192.168.56.111"]
+vm_names = ["kind-host"]
+vm_ips   = ["192.168.56.110"]
 
 vm_config = {
-  memory = "2048"
-  cpus   = 2
+  memory = "6144"  # More memory for single VM running multiple containers
+  cpus   = 4       # More CPUs for better performance
   box    = "debian/bullseye64"
 }
 
@@ -19,11 +18,23 @@ docker_config = {
   log_max_size        = "10m"
 }
 
-# k3s config
-k3s_config = {
-  version     = "latest"
-  server_args = ["--write-kubeconfig-mode", "644"]
-  agent_args  = []
+# KIND config - Single VM with multi-node cluster
+kind_config = {
+  version           = "v0.20.0"
+  cluster_name      = "single-vm-cluster"
+  kubernetes_version = "v1.27.3"
+  worker_node_count = 3  # 1 control-plane + 3 worker nodes (all as containers)
+  api_server_port   = 6443
+  install_k8s_tools = true
+  additional_clusters = []  # No additional clusters needed
+  cluster_config = {
+    networking = {
+      podSubnet     = "10.244.0.0/16"
+      serviceSubnet = "10.96.0.0/12"
+    }
+    feature_gates = {}
+    runtime_config = {}
+  }
 }
 
 # paths
