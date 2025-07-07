@@ -14,13 +14,9 @@ Vagrant.configure("2") do |config|
     vm.vm.network "private_network", ip: "$VM_IP"
     vm.vm.provider "virtualbox" do |vb|
       vb.name = "$VM_NAME"
-      vb.cpus = 2
-      vb.memory = 1024
+      vb.cpus = 4
+      vb.memory = 3072
     end
-    vm.vm.provision "shell", inline: <<-SHELL
-      apt update
-      apt install -y nginx
-    SHELL
   end
 end
 EOF

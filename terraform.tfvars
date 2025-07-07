@@ -1,11 +1,11 @@
 vm_names = ["kind-host"]
 vm_ips   = ["192.168.56.110"]
 
-vm_config = {
-  memory = "6144" 
-  cpus   = 4    
-  box    = "debian/bullseye64"
-}
+# vm_config = {
+#   memory = "8192" 
+#   cpus   = 6    
+#   box    = "debian/bullseye64"
+# }
 
 # docker config
 os_distribution      = "debian"

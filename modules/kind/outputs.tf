@@ -59,8 +59,8 @@ output "installation_status" {
   description = "Installation completion status"
   value = {
     kind_installed    = null_resource.install_kind.id != null ? "completed" : "pending"
-    cluster_created   = null_resource.create_kind_cluster.id != null ? "completed" : "pending"
-    kubeconfig_ready  = null_resource.download_kubeconfig.id != null ? "completed" : "pending"
+    # cluster_created   = null_resource.create_kind_cluster.id != null ? "completed" : "pending"
+    # kubeconfig_ready  = null_resource.download_kubeconfig.id != null ? "completed" : "pending"
   }
 }
 

@@ -30,7 +30,7 @@ module "vagrant_vms" {
   vm_config_hash = md5(jsonencode({
     names  = var.vm_names
     ips    = var.vm_ips
-    config = var.vm_config
+    # config = var.vm_config
   }))
 }
 
@@ -50,7 +50,8 @@ module "docker_provisioner" {
 # module to install KIND
 module "kind" {
   source = "./modules/kind"
-
+  depends_on = [module.docker_provisioner]
+  
   vm_connection_configs = module.vagrant_vms.vm_connection_configs
   vm_dependencies       = module.docker_provisioner.installation_ids
   config_hash          = md5(jsonencode({

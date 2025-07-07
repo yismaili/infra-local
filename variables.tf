@@ -7,7 +7,7 @@ variable "vm_names" {
 variable "vm_ips" {
   description = "List of IP addresses for the VMs"
   type        = list(string)
-  default     = ["0.0.0.0", "0.0.0.0", "0.0.0.0"]
+  default     = ["0.0.0.0"]
 }
 
 variable "vm_base_path" {
@@ -41,15 +41,15 @@ variable "ssh_timeout" {
 }
 
 # vms config
-variable "vm_config" {
-  description = "VM configuration settings"
-  type = object({
-    memory = optional(string, "2048")
-    cpus   = optional(number, 2)
-    box    = optional(string, "debian/bullseye64")
-  })
-  default = {}
-}
+# variable "vm_config" {
+#   description = "VM configuration settings"
+#   type = object({
+#     memory = optional(string, "2048")
+#     cpus   = optional(number, 2)
+#     box    = optional(string, "debian/bullseye64")
+#   })
+#   default = {}
+# }
 
 # docker config
 variable "os_distribution" {
